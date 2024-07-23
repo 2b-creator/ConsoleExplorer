@@ -25,6 +25,7 @@ exampleWindow.KeyPress += (e) =>
 		DatasInProject.CurrentAtDir = path.Parent.FullName;
 		BeforeStartup.SetThisFolder(DatasInProject.CurrentAtDir);
 		FileOperators.ChangeArrayView();
+		exampleWindow.InitFileInfo(exampleWindow.explorerFrame);
 		exampleWindow.ReloadPage();
 		e.Handled = true;
 	}
@@ -34,10 +35,14 @@ exampleWindow.KeyPress += (e) =>
 {
 	if (e.KeyEvent.Key == Key.Enter)
 	{
-		exampleWindow.ChangeDir();
-		FileOperators.ChangeArrayView();
-		exampleWindow.ReloadPage();
-		e.Handled = true;
+		bool isSuccess = exampleWindow.ChangeDir();
+		if (isSuccess)
+		{
+			FileOperators.ChangeArrayView();
+			exampleWindow.InitFileInfo(exampleWindow.explorerFrame);
+			exampleWindow.ReloadPage();
+			e.Handled = true;
+		}
 	}
 };
 

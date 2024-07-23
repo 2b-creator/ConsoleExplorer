@@ -3,6 +3,7 @@ using ConsoleExplorer.Overrides;
 using ConsoleExplorer.UIs;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ namespace ConsoleExplorer.UIs
 	{
 		public TextField usernameText;
 		public MarkPatternListView folderListView;
+		public RadiusCornerFrameview explorerFrame;
 
 		public ExampleWindow()
 		{
@@ -31,7 +33,7 @@ namespace ConsoleExplorer.UIs
 			};
 			this.ColorScheme = customColorScheme;
 
-			var explorerFrame = new RadiusCornerFrameview("Explorer")
+			explorerFrame = new RadiusCornerFrameview("Explorer")
 			{
 				X = 0,
 				Y = 0,
@@ -39,16 +41,6 @@ namespace ConsoleExplorer.UIs
 				Height = Dim.Percent(70),
 				ColorScheme = customColorScheme
 			};
-
-			var detailInfoFrame = new RadiusCornerFrameview("info")
-			{
-				X = 0,
-				Y = 0,
-				Width = Dim.Percent(30),  // 左侧占30%的宽度
-				Height = Dim.Percent(30),
-				ColorScheme = customColorScheme
-			};
-			
 
 			folderListView = new MarkPatternListView(DatasInProject.DirectoryFilesWithIcon)
 			{
@@ -58,12 +50,49 @@ namespace ConsoleExplorer.UIs
 				Height = Dim.Fill(0),
 				SelectedItem = 0,
 			};
-
 			explorerFrame.Add(folderListView);
-
-
-
+			InitFileInfo(explorerFrame);
 			Add(explorerFrame);
+
+
+			folderListView.SelectedItemChanged += FolderListView_SelectedItemChanged;
+		}
+
+		private void FolderListView_SelectedItemChanged(ListViewItemEventArgs obj)
+		{
+			InitFileInfo(explorerFrame);
+		}
+
+		public void InitFileInfo(RadiusCornerFrameview explorerFrame)
+		{
+			string[] path;
+			try
+			{
+				path = new string[] { DatasInProject.CurrentAtDir, DatasInProject.CurrentDirectoryFiles[folderListView.SelectedItem] };
+			}
+			catch (IndexOutOfRangeException ex)
+			{
+				path = new string[] { DatasInProject.CurrentAtDir, DatasInProject.CurrentDirectoryFiles[0] };
+			}
+			string fullPath = Path.Combine(path);
+			DatasInProject.CurrentSelected = fullPath;
+			var detailInfoFrame = new RadiusCornerFrameview("info")
+			{
+				Y = Pos.Bottom(explorerFrame),
+				Width = Dim.Fill(0),
+				Height = Dim.Fill(0)
+			};
+
+			Label fullNameLable = new Label()
+			{
+				X = 0,
+				Y = 0,
+				Text = $"Full Path: {DatasInProject.CurrentSelected}",
+			};
+
+
+			detailInfoFrame.Add(fullNameLable);
+			Add(detailInfoFrame);
 		}
 
 		public void ReloadPage()
@@ -71,11 +100,25 @@ namespace ConsoleExplorer.UIs
 			RemoveAll(); // 清除当前所有控件
 			InitializeUI(); // 重新初始化控件
 		}
-		public void ChangeDir()
+		public bool ChangeDir()
 		{
 			string[] path = new string[] { DatasInProject.CurrentAtDir, DatasInProject.CurrentDirectoryFiles[folderListView.SelectedItem] };
 			string fullPath = Path.Combine(path);
-			BeforeStartup.SetThisFolder(fullPath);
+			bool isOk = false;
+			try
+			{
+				isOk = (File.GetAttributes(fullPath) & FileAttributes.Directory) == FileAttributes.Directory;
+			}
+			catch (IOException)
+			{
+				return false;
+			}
+			if (isOk)
+			{
+				BeforeStartup.SetThisFolder(fullPath);
+				return true;
+			}
+			return false;
 		}
 	}
 	public class RadiusCornerWindow : ExampleWindow

@@ -17,7 +17,11 @@ namespace ConsoleExplorer.AppFunctions
 		public static void SetThisFolder(string folder)
 		{
 			DatasInProject.CurrentAtDir = folder;
-			DatasInProject.CurrentDirectoryFiles = FileOperators.GetFolderDirectories(folder);
+			if (FileOperators.GetFolderDirectories(folder)!=null)
+			{
+				DatasInProject.CurrentDirectoryFiles = FileOperators.GetFolderDirectories(folder)!;
+			}
+			
 		}
 	}
 }

@@ -11,5 +11,7 @@ namespace ConsoleExplorer.AppFunctions
 		public static string[] CurrentDirectoryFiles = new string[] { };
 		public static string[] DirectoryFilesWithIcon;
 		public static string CurrentAtDir { get; set; }
+		public static string CurrentAttribute { get; set; }
+		public static string CurrentSelected { get; set;}
 	}
 }

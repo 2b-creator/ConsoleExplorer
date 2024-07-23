@@ -9,10 +9,18 @@ namespace ConsoleExplorer.AppFunctions
 {
 	public class FileOperators
 	{
-		public static string[] GetFolderDirectories(string path)
+		public static string[]? GetFolderDirectories(string path)
 		{
 			List<string> filesAndDirs = new List<string>();
-			string[] filestr = Directory.GetFiles(path);
+			string[] filestr;
+			try
+			{
+				filestr = Directory.GetFiles(path);
+			}
+			catch (IOException)
+			{
+				return null;
+			}
 			string[] directorystr = Directory.GetDirectories(path);
 			for (int i = 0; i < directorystr.Length; i++)
 			{
