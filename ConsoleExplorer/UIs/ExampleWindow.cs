@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,6 +19,9 @@ namespace ConsoleExplorer.UIs
 		public MarkPatternListView folderListView;
 		public RadiusCornerFrameview explorerFrame;
 		public RadiusCornerFrameview folderOrFileView;
+		public Label detailedFileView;
+		public ScrollView scrollView;
+		public bool isDir = true;
 
 		public ExampleWindow()
 		{
@@ -57,8 +61,6 @@ namespace ConsoleExplorer.UIs
 			InitFileInfo(explorerFrame);
 			Add(explorerFrame);
 
-
-
 			folderListView.SelectedItemChanged += FolderListView_SelectedItemChanged;
 		}
 
@@ -77,13 +79,35 @@ namespace ConsoleExplorer.UIs
 				Height = Dim.Fill(0),
 				CanFocus = false,
 			};
-			folderOrFileView.Add(detailedFolderView);
+			if (DatasInProject.CurrentSelected != null)
+			{
+				FileInfo fileInfo = new FileInfo(DatasInProject.CurrentSelected);
+				detailedFileView = new Label($"{fileInfo.Name}")
+				{
+					Text = DatasInProject.FileContent,
+				};
+				scrollView = new ScrollView
+				{
+					X = 0,
+					Y = 0,
+					Width = Dim.Fill(),
+					Height = Dim.Fill(),
+					ContentSize = new Size(100, 100),
+					ShowVerticalScrollIndicator = true,
+					ShowHorizontalScrollIndicator = true
+				};
+			}
+
+
+			if (isDir) { folderOrFileView.Add(detailedFolderView); }
+			else { folderOrFileView.Add(scrollView); scrollView.Add(detailedFileView); }
+
 			Add(folderOrFileView);
 		}
 
 		private void FolderListView_SelectedItemChanged(ListViewItemEventArgs obj)
 		{
-			
+
 			InitFileInfo(explorerFrame);// 这个始终在第一位
 			SetCurrentDirDetail();
 		}
@@ -93,10 +117,27 @@ namespace ConsoleExplorer.UIs
 			string fileFullName = DatasInProject.CurrentSelected;
 			if ((File.GetAttributes(fileFullName) & FileAttributes.Directory) == FileAttributes.Directory)
 			{
+				isDir = true;
 				DatasInProject.DirectoryDetailedInfo = FileOperators.GetFolderDirectories(fileFullName)!;
 				FileOperators.ChangeArrayViewDetailed();
 			}
+			else
+			{
+				string[] invalidExtension = new string[] { "dll", "exe", "db" };
+				int binaryTest = Array.IndexOf(invalidExtension, Path.GetExtension(fileFullName));
+				if (binaryTest == -1)
+				{
+					DatasInProject.FileContent = GetFileContent.ReadFileContent(fileFullName);
+					if (GetFileContent.HasBinaryContent(DatasInProject.FileContent))
+					{
+						DatasInProject.FileContent = "Binary file";
+					}
+				}
+				isDir = false;
+			}
+			this.Remove(folderOrFileView);
 			DetailInfoInit();
+
 		}
 
 		public void InitFileInfo(RadiusCornerFrameview explorerFrame)
