@@ -26,6 +26,7 @@ exampleWindow.KeyPress += (e) =>
 		BeforeStartup.SetThisFolder(DatasInProject.CurrentAtDir);
 		FileOperators.ChangeArrayView();
 		exampleWindow.InitFileInfo(exampleWindow.explorerFrame);
+		exampleWindow.SetCurrentDirDetail();
 		exampleWindow.ReloadPage();
 		e.Handled = true;
 	}
@@ -40,6 +41,7 @@ exampleWindow.KeyPress += (e) =>
 		{
 			FileOperators.ChangeArrayView();
 			exampleWindow.InitFileInfo(exampleWindow.explorerFrame);
+			exampleWindow.SetCurrentDirDetail();
 			exampleWindow.ReloadPage();
 			e.Handled = true;
 		}

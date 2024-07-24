@@ -41,18 +41,36 @@ namespace ConsoleExplorer.AppFunctions
 		{
 			int length = DatasInProject.CurrentDirectoryFiles.Length;
 			DatasInProject.DirectoryFilesWithIcon = (string[])DatasInProject.CurrentDirectoryFiles.Clone();
-			List<string> strings = new List<string>();
 			for (int i = 0; i < length; i++)
 			{
 				string[] path = new string[2] { DatasInProject.CurrentAtDir, DatasInProject.CurrentDirectoryFiles[i] };
 				string fileFullName = Path.Combine(path);
 				if (!((File.GetAttributes(fileFullName) & FileAttributes.Directory) == FileAttributes.Directory))
 				{
+
 					DatasInProject.DirectoryFilesWithIcon[i] = " " + DatasInProject.CurrentDirectoryFiles[i];
 				}
 				else
 				{
 					DatasInProject.DirectoryFilesWithIcon[i] = " " + DatasInProject.CurrentDirectoryFiles[i];
+				}
+			}
+		}
+		public static void ChangeArrayViewDetailed()
+		{
+			int length = DatasInProject.DirectoryDetailedInfo.Length;
+			DatasInProject.DirectoryDetailedInfoWithIcon = (string[])DatasInProject.DirectoryDetailedInfo.Clone();
+			for (int i = 0; i < length; i++)
+			{
+				string[] path = new string[2] { DatasInProject.CurrentSelected, DatasInProject.DirectoryDetailedInfo[i] };
+				string fileFullName = Path.Combine(path);
+				if (!((File.GetAttributes(fileFullName) & FileAttributes.Directory) == FileAttributes.Directory))
+				{
+					DatasInProject.DirectoryDetailedInfoWithIcon[i] = " " + DatasInProject.DirectoryDetailedInfo[i];
+				}
+				else
+				{
+					DatasInProject.DirectoryDetailedInfoWithIcon[i] = " " + DatasInProject.DirectoryDetailedInfo[i];
 				}
 			}
 		}

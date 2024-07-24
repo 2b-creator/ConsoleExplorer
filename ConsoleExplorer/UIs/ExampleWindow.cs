@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using Terminal.Gui;
@@ -16,6 +17,7 @@ namespace ConsoleExplorer.UIs
 		public TextField usernameText;
 		public MarkPatternListView folderListView;
 		public RadiusCornerFrameview explorerFrame;
+		public RadiusCornerFrameview folderOrFileView;
 
 		public ExampleWindow()
 		{
@@ -44,23 +46,57 @@ namespace ConsoleExplorer.UIs
 
 			folderListView = new MarkPatternListView(DatasInProject.DirectoryFilesWithIcon)
 			{
-				X = 0,
-				Y = 0,
 				Width = Dim.Fill(0),  // Set width
 				Height = Dim.Fill(0),
 				SelectedItem = 0,
 			};
+
+			DetailInfoInit();
+
 			explorerFrame.Add(folderListView);
 			InitFileInfo(explorerFrame);
 			Add(explorerFrame);
 
 
+
 			folderListView.SelectedItemChanged += FolderListView_SelectedItemChanged;
+		}
+
+		private void DetailInfoInit()
+		{
+			folderOrFileView = new RadiusCornerFrameview("Detail")
+			{
+				X = Pos.Right(explorerFrame),
+				Width = Dim.Percent(30),
+				Height = Dim.Percent(70),
+			};
+
+			MarkPatternListView detailedFolderView = new MarkPatternListView(DatasInProject.DirectoryDetailedInfoWithIcon)
+			{
+				Width = Dim.Fill(0),  // Set width
+				Height = Dim.Fill(0),
+				CanFocus = false,
+			};
+			folderOrFileView.Add(detailedFolderView);
+			Add(folderOrFileView);
 		}
 
 		private void FolderListView_SelectedItemChanged(ListViewItemEventArgs obj)
 		{
-			InitFileInfo(explorerFrame);
+			
+			InitFileInfo(explorerFrame);// 这个始终在第一位
+			SetCurrentDirDetail();
+		}
+
+		public void SetCurrentDirDetail()
+		{
+			string fileFullName = DatasInProject.CurrentSelected;
+			if ((File.GetAttributes(fileFullName) & FileAttributes.Directory) == FileAttributes.Directory)
+			{
+				DatasInProject.DirectoryDetailedInfo = FileOperators.GetFolderDirectories(fileFullName)!;
+				FileOperators.ChangeArrayViewDetailed();
+			}
+			DetailInfoInit();
 		}
 
 		public void InitFileInfo(RadiusCornerFrameview explorerFrame)
