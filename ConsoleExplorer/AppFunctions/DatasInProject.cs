@@ -17,5 +17,6 @@ namespace ConsoleExplorer.AppFunctions
 		public static string CurrentAtDir { get; set; }
 		public static string CurrentAttribute { get; set; }
 		public static string CurrentSelected { get; set; }
+		public static string CopyObject { get; set; }
 	}
 }

@@ -47,8 +47,27 @@ namespace ConsoleExplorer.AppFunctions
 				string fileFullName = Path.Combine(path);
 				if (!((File.GetAttributes(fileFullName) & FileAttributes.Directory) == FileAttributes.Directory))
 				{
-
-					DatasInProject.DirectoryFilesWithIcon[i] = " " + DatasInProject.CurrentDirectoryFiles[i];
+					string ext = Path.GetExtension(DatasInProject.CurrentDirectoryFiles[i]);
+					if (ext == ".json")
+					{
+						DatasInProject.DirectoryFilesWithIcon[i] = " " + DatasInProject.CurrentDirectoryFiles[i];
+					}
+					else if (ext == ".dll")
+					{
+						DatasInProject.DirectoryFilesWithIcon[i] = " " + DatasInProject.CurrentDirectoryFiles[i];
+					}
+					else if (ext == ".exe")
+					{
+						DatasInProject.DirectoryFilesWithIcon[i] = "󰘔 " + DatasInProject.CurrentDirectoryFiles[i];
+					}
+					else if (ext == ".cs")
+					{
+						DatasInProject.DirectoryFilesWithIcon[i] = "󰌛 " + DatasInProject.CurrentDirectoryFiles[i];
+					}
+					else
+					{
+						DatasInProject.DirectoryFilesWithIcon[i] = " " + DatasInProject.CurrentDirectoryFiles[i];
+					}
 				}
 				else
 				{
@@ -66,7 +85,26 @@ namespace ConsoleExplorer.AppFunctions
 				string fileFullName = Path.Combine(path);
 				if (!((File.GetAttributes(fileFullName) & FileAttributes.Directory) == FileAttributes.Directory))
 				{
-					DatasInProject.DirectoryDetailedInfoWithIcon[i] = " " + DatasInProject.DirectoryDetailedInfo[i];
+					if (Path.GetExtension(DatasInProject.DirectoryDetailedInfo[i]) == ".json")
+					{
+						DatasInProject.DirectoryDetailedInfoWithIcon[i] = " " + DatasInProject.DirectoryDetailedInfo[i];
+					}
+					else if (Path.GetExtension(DatasInProject.DirectoryDetailedInfo[i]) == ".dll")
+					{
+						DatasInProject.DirectoryDetailedInfoWithIcon[i] = " " + DatasInProject.DirectoryDetailedInfo[i];
+					}
+					else if (Path.GetExtension(DatasInProject.DirectoryDetailedInfo[i]) == ".exe")
+					{
+						DatasInProject.DirectoryDetailedInfoWithIcon[i] = "󰘔 " + DatasInProject.DirectoryDetailedInfo[i];
+					}
+					else if (Path.GetExtension(DatasInProject.DirectoryDetailedInfo[i]) == ".cs")
+					{
+						DatasInProject.DirectoryDetailedInfoWithIcon[i] = "󰌛 " + DatasInProject.DirectoryDetailedInfo[i];
+					}
+					else
+					{
+						DatasInProject.DirectoryDetailedInfoWithIcon[i] = " " + DatasInProject.DirectoryDetailedInfo[i];
+					}
 				}
 				else
 				{

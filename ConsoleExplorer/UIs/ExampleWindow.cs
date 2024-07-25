@@ -21,11 +21,13 @@ namespace ConsoleExplorer.UIs
 		public RadiusCornerFrameview folderOrFileView;
 		public Label detailedFileView;
 		public ScrollView scrollView;
+		public RadiusCornerFrameview detailInfoFrame;
 		public bool isDir = true;
 
 		public ExampleWindow()
 		{
 			InitializeUI();
+			
 		}
 
 		private void InitializeUI()
@@ -39,7 +41,7 @@ namespace ConsoleExplorer.UIs
 			};
 			this.ColorScheme = customColorScheme;
 
-			explorerFrame = new RadiusCornerFrameview("Explorer")
+			explorerFrame = new RadiusCornerFrameview(" Explorer")
 			{
 				X = 0,
 				Y = 0,
@@ -56,17 +58,28 @@ namespace ConsoleExplorer.UIs
 			};
 
 			DetailInfoInit();
-
 			explorerFrame.Add(folderListView);
 			InitFileInfo(explorerFrame);
 			Add(explorerFrame);
-
+			ClipboardInit();
 			folderListView.SelectedItemChanged += FolderListView_SelectedItemChanged;
+		}
+
+		private void ClipboardInit()
+		{
+			RadiusCornerFrameview clipFrameView = new RadiusCornerFrameview(" Clipboard")
+			{
+				X = Pos.Right(detailInfoFrame),
+				Y = Pos.Bottom(explorerFrame),
+				Width = Dim.Fill(0),
+				Height = Dim.Fill(0),
+			};
+			Add(clipFrameView);
 		}
 
 		private void DetailInfoInit()
 		{
-			folderOrFileView = new RadiusCornerFrameview("Detail")
+			folderOrFileView = new RadiusCornerFrameview("󰦨 Detail")
 			{
 				X = Pos.Right(explorerFrame),
 				Width = Dim.Percent(30),
@@ -92,7 +105,7 @@ namespace ConsoleExplorer.UIs
 					Y = 0,
 					Width = Dim.Fill(),
 					Height = Dim.Fill(),
-					ContentSize = new Size(100, 100),
+					ContentSize = new Size(70, 100),
 					ShowVerticalScrollIndicator = true,
 					ShowHorizontalScrollIndicator = true
 				};
@@ -123,7 +136,7 @@ namespace ConsoleExplorer.UIs
 			}
 			else
 			{
-				string[] invalidExtension = new string[] { "dll", "exe", "db" };
+				string[] invalidExtension = new string[] { ".dll", ".exe", ".db" };
 				int binaryTest = Array.IndexOf(invalidExtension, Path.GetExtension(fileFullName));
 				if (binaryTest == -1)
 				{
@@ -132,6 +145,10 @@ namespace ConsoleExplorer.UIs
 					{
 						DatasInProject.FileContent = "Binary file";
 					}
+				}
+				else
+				{
+					DatasInProject.FileContent = "Binary file";
 				}
 				isDir = false;
 			}
@@ -153,13 +170,22 @@ namespace ConsoleExplorer.UIs
 			}
 			string fullPath = Path.Combine(path);
 			DatasInProject.CurrentSelected = fullPath;
-			var detailInfoFrame = new RadiusCornerFrameview("info")
+			detailInfoFrame = new RadiusCornerFrameview(" Info")
 			{
 				Y = Pos.Bottom(explorerFrame),
-				Width = Dim.Fill(0),
+				Width = Dim.Percent(60),
 				Height = Dim.Fill(0)
 			};
-
+			var fileInfoScrollView = new ScrollView
+			{
+				X = 0,
+				Y = 0,
+				Width = Dim.Fill(),
+				Height = Dim.Fill(),
+				ContentSize = new Size(100,1),
+				ShowVerticalScrollIndicator = true,
+				ShowHorizontalScrollIndicator = true
+			};
 			Label fullNameLable = new Label()
 			{
 				X = 0,
@@ -167,8 +193,8 @@ namespace ConsoleExplorer.UIs
 				Text = $"Full Path: {DatasInProject.CurrentSelected}",
 			};
 
-
-			detailInfoFrame.Add(fullNameLable);
+			fileInfoScrollView.Add(fullNameLable);
+			detailInfoFrame.Add(fileInfoScrollView);
 			Add(detailInfoFrame);
 		}
 
