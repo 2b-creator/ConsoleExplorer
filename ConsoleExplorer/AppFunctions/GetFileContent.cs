@@ -18,6 +18,7 @@ namespace ConsoleExplorer.AppFunctions
 		}
 		public static bool HasBinaryContent(string content)
 		{
+			// todo
 			// 定义一个阈值，如果超过这个阈值的字符是不可打印的，我们认为这是二进制内容
 			const double nonPrintableThreshold = 0.05; // 30%的非打印字符
 
